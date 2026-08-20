@@ -1,0 +1,112 @@
+# API Design Specification — VisionTalk Retail Intelligence
+
+## 1. API Standards & Principles
+
+- **Base URL**: `/api/v1`
+- **Protocol**: REST over HTTPS
+- **Data Format**: JSON (`Content-Type: application/json`)
+- **Authentication**: Bearer Token (JWT in `Authorization` header)
+- **Error Response Standard**:
+  ```json
+  {
+    "error": {
+      "code": "RESOURCE_NOT_FOUND",
+      "message": "The requested image ID does not exist.",
+      "details": {}
+    }
+  }
+  ```
+
+---
+
+## 2. Core Endpoint Specifications
+
+### 2.1 Authentication & User Management (`/auth`)
+
+#### `POST /api/v1/auth/register`
+Creates a new user account and company workspace.
+
+#### `POST /api/v1/auth/login`
+Authenticates credentials and returns a JWT access token.
+- **Request**: `{ "email": "auditor@retail.com", "password": "..." }`
+- **Response**: `{ "access_token": "eyJ...", "token_type": "bearer", "expires_in": 86400 }`
+
+---
+
+### 2.2 Store & Planogram Management (`/stores`)
+
+#### `GET /api/v1/stores`
+Lists all stores belonging to the user's company.
+
+#### `POST /api/v1/stores/{store_id}/planograms`
+Uploads or updates expected shelf product target configurations (planograms).
+
+---
+
+### 2.3 Image Ingestion & Management (`/images`)
+
+#### `POST /api/v1/images/upload`
+Uploads a retail shelf image (`multipart/form-data`).
+- **Form Data**: `file` (binary), `store_id` (UUID), `shelf_section` (string).
+- **Response**:
+  ```json
+  {
+    "image_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+    "store_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+    "file_name": "shelf_auditing_001.jpeg",
+    "storage_url": "/storage/images/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d.jpeg",
+    "uploaded_at": "2026-08-20T10:15:00Z"
+  }
+  ```
+
+---
+
+### 2.4 Vision Analysis Engine (`/analysis`)
+
+#### `POST /api/v1/analysis/run`
+Triggers full Layer 1 (YOLO + OCR) and Layer 2/3 (Evidence + Retail Analysis) pipeline execution.
+- **Request**: `{ "image_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d", "planogram_id": "..." }`
+- **Response**: Returns full structured `AnalysisRun` object including detections, OCR, compliance score, and detected issues.
+
+#### `GET /api/v1/analysis/{analysis_id}`
+Retrieves existing analysis run results by ID.
+
+---
+
+### 2.5 Grounded Assistant & Chat (`/chat`)
+
+#### `POST /api/v1/chat/query`
+Processes user questions against an analysis run using the Question Router.
+- **Request**:
+  ```json
+  {
+    "analysis_id": "c1f72818-4228-4c12-8e10-92891bb35111",
+    "question": "Why is the compliance score low for this shelf?"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "answer": "The compliance score is 65% primarily due to 2 missing expected SKUs (Product C, Product D) and a price tag discrepancy on Product A (displayed: ₹120, expected: ₹110).",
+    "grounding_evidence": {
+      "missing_skus": ["Product C", "Product D"],
+      "price_mismatches": [{"sku": "Product A", "displayed": "₹120", "expected": "₹110"}]
+    },
+    "router_target": "COMPLIANCE_SERVICE_LLM"
+  }
+  ```
+
+---
+
+### 2.6 Audit Comparisons (`/comparisons`)
+
+#### `POST /api/v1/comparisons/diff`
+Compares two analysis runs (`baseline_analysis_id` vs `current_analysis_id`).
+- **Response**: Returns deltas for added products, removed products, movement, and price changes.
+
+---
+
+### 2.7 System & Health Checks (`/health`)
+
+#### `GET /api/v1/health`
+Returns component status (API, Database, YOLO model loaded, OCR engine status).
