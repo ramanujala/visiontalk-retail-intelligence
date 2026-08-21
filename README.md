@@ -4,31 +4,23 @@
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18+-blue.svg)](https://react.dev/)
-[![YOLO](https://img.shields.io/badge/YOLO-v8%2Fv11-orange.svg)](https://docs.ultralytics.com/)
-[![PaddleOCR](https://img.shields.io/badge/PaddleOCR-v2.7+-red.svg)](https://github.com/PaddlePaddle/PaddleOCR)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.2+-blue.svg)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
 
 An enterprise-grade, AI-powered retail visual intelligence platform that converts store shelf images into structured, deterministic, and explainable retail operational insights.
 
 ---
 
-## 📌 Executive Overview
+## 🚦 Project Status: PHASE 1 COMPLETE
 
-Retail shelf auditing is traditionally manual, expensive, error-prone, and difficult to scale across store networks. **VisionTalk Retail Intelligence** automates shelf inspection by systematically answering critical operational questions:
-
-1. What products are present on the shelf?
-2. How many items of each SKU exist?
-3. Which expected products are missing or misplaced?
-4. Are there unauthorized extra products?
-5. Are there empty shelf gaps requiring replenishment?
-6. Are displayed promotional prices matching expected store pricing?
-7. What is the overall compliance score of the shelf?
-8. What specific visual changes occurred compared to a prior visit?
+- [x] **Phase 0 — Architecture & Planning**: Architecture design, database schema, API contract, ML strategy, and guidelines documented.
+- [x] **Phase 1 — Project Foundation**: Modular FastAPI backend, React 18 + TypeScript frontend shell, PostgreSQL configuration, StorageService abstraction, health check endpoints (liveness & readiness), Docker Compose setup, and Pytest/Vitest testing suites.
 
 ---
 
-## 🏗️ Core Architectural Principle
+## 🏗️ System Architecture & Layer Breakdown
 
-VisionTalk strictly avoids being a simple "image-to-LLM" chatbot. It separates intelligence into three deterministic, audit-traceable layers:
+VisionTalk decomposes retail shelf analysis into three decoupled conceptual layers:
 
 ```
 +-----------------------------------------------------------------------+
@@ -39,7 +31,7 @@ VisionTalk strictly avoids being a simple "image-to-LLM" chatbot. It separates i
                                     v
 +-----------------------------------------------------------------------+
 |                          LAYER 2: EVIDENCE                            |
-|             Structured JSON Evidence (Bounding BBoxes,                |
+|             Structured JSON Evidence (Bounding Boxes,                 |
 |           Spatial Coordinates, Text Confidence, Signatures)           |
 +-----------------------------------+-----------------------------------+
                                     |
@@ -52,24 +44,99 @@ VisionTalk strictly avoids being a simple "image-to-LLM" chatbot. It separates i
 +-----------------------------------------------------------------------+
 ```
 
-1. **Perception**: Computer vision models extract factual visual attributes (bounding boxes, class labels, text, spatial positions).
-2. **Evidence**: Formats raw perceptual outputs into a strictly typed, versioned structured JSON evidence schema.
-3. **Reasoning**: Applies deterministic business algorithms for counts, missing products, placement verification, and price discrepancies, using LLM ONLY for grounded natural language explanations.
+For detailed specs, refer to:
+- [docs/ARCHITECTURE.md](file:///c:/Users/raman/OneDrive/Desktop/visiontalkai/docs/ARCHITECTURE.md)
+- [docs/ROADMAP.md](file:///c:/Users/raman/OneDrive/Desktop/visiontalkai/docs/ROADMAP.md)
+- [docs/API_DESIGN.md](file:///c:/Users/raman/OneDrive/Desktop/visiontalkai/docs/API_DESIGN.md)
+- [docs/DATA_MODEL.md](file:///c:/Users/raman/OneDrive/Desktop/visiontalkai/docs/DATA_MODEL.md)
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Prerequisites
 
-- **Frontend**: React 18, TypeScript, Vanilla CSS (Design Tokens & CSS Modules)
-- **Backend**: Python 3.11+, FastAPI, Pydantic v2, SQLAlchemy 2.0
-- **Database**: PostgreSQL
-- **Computer Vision**: Ultralytics YOLO, OpenCV
-- **OCR**: PaddleOCR
-- **Multimodal AI**: Google GenAI SDK (Gemini 2.5 / 3 Flash)
-- **Storage**: Abstracted Storage Provider (Local Filesystem for Dev, S3-compatible for Prod)
-- **Background & Caching**: Redis + Celery / Worker Queue (Architecture Ready)
-- **Containerization**: Docker, Docker Compose
-- **Testing**: Pytest (Backend/CV), Vitest / React Testing Library (Frontend)
+- **Python**: 3.11+
+- **Node.js**: 18+ (with npm)
+- **PostgreSQL**: 15+ (Local or Docker)
+- **Docker & Docker Compose** (Optional for containerized development)
+
+---
+
+## 🚀 Local Setup & Getting Started
+
+### 1. Environment Configuration
+Copy the template `.env.example` file to `.env`:
+```bash
+cp .env.example .env
+```
+
+### 2. Backend Setup & Local Server
+Create a virtual environment, install dependencies, and launch FastAPI:
+```bash
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment (Windows PowerShell)
+.\.venv\Scripts\Activate.ps1
+
+# Install requirements
+pip install -r backend/requirements.txt
+
+# Run FastAPI server
+cd backend
+uvicorn app.main:app --reload --port 8000
+```
+Backend will be available at `http://localhost:8000`. API documentation is accessible at `http://localhost:8000/api/v1/docs`.
+
+### 3. Frontend Setup & React Shell
+Install npm packages and launch Vite development server:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Frontend application will be accessible at `http://localhost:5173`.
+
+---
+
+## 🐳 Docker Compose Setup
+
+Spin up PostgreSQL, FastAPI backend, and React frontend containers in a single command:
+```bash
+docker compose up -d --build
+```
+- **Frontend App**: `http://localhost:5173`
+- **FastAPI Backend**: `http://localhost:8000`
+- **PostgreSQL**: `localhost:5432`
+
+---
+
+## 🧪 Testing Protocols
+
+### Backend Pytest Suite
+Run unit tests (no database required):
+```bash
+cd backend
+pytest -m "not integration"
+```
+
+Run integration tests (verifies PostgreSQL readiness):
+```bash
+cd backend
+pytest -m integration
+```
+
+Run complete test suite:
+```bash
+cd backend
+pytest
+```
+
+### Frontend Vitest Suite
+Run React component unit tests:
+```bash
+cd frontend
+npm test
+```
 
 ---
 
@@ -77,31 +144,37 @@ VisionTalk strictly avoids being a simple "image-to-LLM" chatbot. It separates i
 
 ```
 visiontalk-retail-intelligence/
-├── README.md
-├── docs/
-│   ├── ARCHITECTURE.md          # End-to-end system design & data flow
-│   ├── ROADMAP.md               # 20-Phase implementation plan
-│   ├── ML_STRATEGY.md           # CV/OCR/YOLO fine-tuning strategy
-│   ├── API_DESIGN.md            # REST API contract specifications
-│   ├── DATA_MODEL.md            # Database schema & Evidence JSON schema
-│   ├── RETAIL_ANALYSIS.md       # Deterministic business logic & math
-│   ├── LLM_GROUNDING.md         # Prompting & grounding guardrails
-│   ├── EVALUATION.md            # CV, OCR, and LLM metrics & benchmarks
-│   └── DEVELOPMENT_GUIDELINES.md # Code standards, git rules, & security
-├── backend/                     # FastAPI Application (Phase 1+)
-└── frontend/                    # React Application (Phase 1+)
+├── backend/
+│   ├── app/
+│   │   ├── api/v1/health.py     # Liveness & Readiness endpoints
+│   │   ├── core/                # Config (CORS, DB, env), exceptions, database session
+│   │   ├── schemas/             # Pydantic data schemas
+│   │   ├── services/storage/    # StorageService abstraction & LocalStorageProvider
+│   │   └── main.py              # FastAPI app entry point
+│   ├── tests/                   # Pytest test suite
+│   ├── pytest.ini               # Pytest markers config
+│   ├── requirements.txt         # Python dependencies
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   │   ├── components/          # HealthCard component
+│   │   ├── services/            # API fetch client
+│   │   ├── types/               # TypeScript interface definitions
+│   │   ├── App.tsx              # App shell
+│   │   └── main.tsx             # React DOM entry
+│   ├── tests/                   # Vitest unit tests
+│   ├── package.json             # NPM dependencies
+│   ├── vite.config.ts           # Vite + Vitest config
+│   └── Dockerfile
+├── docs/                        # Phase 0 Architecture Specifications
+├── docker-compose.yml           # Docker services declaration
+├── .env.example                 # Environment template
+├── .gitignore
+└── README.md
 ```
-
----
-
-## 🚦 Project Status
-
-Current Phase: **PHASE 0 — Architecture & Planning Complete**
-
-Refer to [docs/ROADMAP.md](file:///c:/Users/raman/OneDrive/Desktop/visiontalkai/docs/ROADMAP.md) for the complete 20-phase execution plan.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License.
