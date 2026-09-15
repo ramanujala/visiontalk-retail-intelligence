@@ -25,6 +25,7 @@ class Store(Base):
 
     # Relationships
     company = relationship("Company", back_populates="stores")
+    images = relationship("Image", back_populates="store", cascade="all, delete-orphan")
 
     __table_args__ = (
         UniqueConstraint("company_id", "code", name="uix_company_store_code"),

@@ -16,6 +16,7 @@ An enterprise-grade, AI-powered retail visual intelligence platform that convert
 - [x] **Phase 0 — Architecture & Planning**: Architecture design, database schema, API contract, ML strategy, and guidelines documented.
 - [x] **Phase 1 — Project Foundation**: Modular FastAPI backend, React 18 + TypeScript frontend shell, PostgreSQL configuration, StorageService abstraction, health check endpoints (liveness & readiness), Docker Compose setup, and Pytest/Vitest testing suites.
 - [x] **Phase 2 — Multi-Tenant Foundation & Authentication**: Relational domain models (`Company`, `User`, `Store`), Alembic database migrations, bcrypt password hashing, JWT authentication, atomic company registration, strict backend tenant isolation, role authorization, tenant Store APIs, React authentication UI, and comprehensive Pytest/Vitest test suites.
+- [x] **Phase 3 — Image Ingestion, Validation & Storage**: Image model (`Image`), Alembic migration (`002_phase3_images_schema`), image upload API (`POST /api/v1/images`), MIME/header/dimension/size file validation, Pillow decoding check, SHA-256 checksum generation, deterministic OpenCV image quality assessment (score & flags), secure storage pathing (`{company_id}/{store_id}/{uuid}.jpg`), tenant-isolated listing/detail/deletion APIs, React ImageUpload UI, and comprehensive Pytest/Vitest tests.
 
 ---
 

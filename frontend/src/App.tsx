@@ -2,18 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Stores } from './pages/Stores';
+import { ImageUpload } from './pages/ImageUpload';
 import { HealthCard } from './components/HealthCard';
 import { fetchLiveness, fetchReadiness } from './services/api';
 import { fetchMe } from './services/auth';
+import { fetchStores } from './services/stores';
 import { LivenessStatus, ReadinessStatus } from './types/health';
 import { User } from './types/auth';
+import { Store } from './types/store';
 import styles from './App.module.css';
 import authStyles from './pages/Auth.module.css';
 
 export const App: React.FC = () => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('vt_token'));
   const [user, setUser] = useState<User | null>(null);
+  const [stores, setStores] = useState<Store[]>([]);
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
+  const [activeTab, setActiveTab] = useState<'stores' | 'images'>('images');
 
   // System Health state
   const [liveness, setLiveness] = useState<LivenessStatus | null>(null);
@@ -33,9 +38,8 @@ export const App: React.FC = () => {
       } catch (readyErr) {
         setReadiness({
           status: 'unhealthy',
-          database_connected: false,
-          version: liveData.version,
           timestamp: new Date().toISOString(),
+          checks: { postgresql: 'disconnected' }
         });
       }
     } catch (err: any) {
@@ -45,10 +49,12 @@ export const App: React.FC = () => {
     }
   };
 
-  const loadUserProfile = async (authToken: string) => {
+  const loadUserProfileAndStores = async (authToken: string) => {
     try {
       const profile = await fetchMe(authToken);
       setUser(profile);
+      const storeList = await fetchStores(authToken);
+      setStores(storeList);
     } catch (err) {
       // Invalid/expired token
       handleLogout();
@@ -58,7 +64,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     checkHealth();
     if (token) {
-      loadUserProfile(token);
+      loadUserProfileAndStores(token);
     }
   }, [token]);
 
@@ -71,6 +77,7 @@ export const App: React.FC = () => {
     localStorage.removeItem('vt_token');
     setToken(null);
     setUser(null);
+    setStores([]);
   };
 
   return (
@@ -78,7 +85,7 @@ export const App: React.FC = () => {
       <header className={styles.brandHeader}>
         <h1 className={styles.logo}>VisionTalk Retail Intelligence</h1>
         <p className={styles.tagline}>
-          AI-Powered Retail Visual Intelligence Platform — Multi-Tenant Foundation
+          AI-Powered Retail Visual Intelligence Platform — Image Ingestion System
         </p>
       </header>
 
@@ -97,13 +104,51 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* Auth Views vs Stores View */}
+      {/* Navigation Tabs when Authenticated */}
+      {token && user && (
+        <div style={{ display: 'flex', gap: '1rem', width: '100%', maxWidth: '800px', margin: '0 auto 1.5rem auto' }}>
+          <button
+            onClick={() => setActiveTab('images')}
+            style={{
+              flex: 1,
+              padding: '0.8rem',
+              borderRadius: '8px',
+              border: 'none',
+              backgroundColor: activeTab === 'images' ? 'var(--primary-color, #3b82f6)' : 'rgba(255,255,255,0.05)',
+              color: '#fff',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            Image Ingestion & Gallery
+          </button>
+          <button
+            onClick={() => setActiveTab('stores')}
+            style={{
+              flex: 1,
+              padding: '0.8rem',
+              borderRadius: '8px',
+              border: 'none',
+              backgroundColor: activeTab === 'stores' ? 'var(--primary-color, #3b82f6)' : 'rgba(255,255,255,0.05)',
+              color: '#fff',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            Store Locations
+          </button>
+        </div>
+      )}
+
+      {/* Auth Views vs App Views */}
       {!token ? (
         authView === 'login' ? (
           <Login onSuccess={handleLoginSuccess} onSwitchToRegister={() => setAuthView('register')} />
         ) : (
           <Register onSuccess={handleLoginSuccess} onSwitchToLogin={() => setAuthView('login')} />
         )
+      ) : activeTab === 'images' ? (
+        <ImageUpload token={token} stores={stores} />
       ) : (
         <Stores token={token} />
       )}

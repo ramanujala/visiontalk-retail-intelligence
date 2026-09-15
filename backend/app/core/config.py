@@ -32,6 +32,14 @@ class Settings(BaseSettings):
     # Storage Configuration
     STORAGE_DIR: str = "storage_uploads"
 
+    # Image Ingestion & Validation Limits
+    MAX_IMAGE_SIZE_MB: int = 15
+    MIN_IMAGE_WIDTH: int = 100
+    MIN_IMAGE_HEIGHT: int = 100
+    MAX_IMAGE_WIDTH: int = 8000
+    MAX_IMAGE_HEIGHT: int = 8000
+    ALLOWED_IMAGE_MIME_TYPES: List[str] = ["image/jpeg", "image/png", "image/webp"]
+
     # JWT Authentication Configuration
     JWT_SECRET_KEY: str = Field(
         default="DEV_ONLY_SECRET_KEY_CHANGE_IN_PRODUCTION_32BYTES_LONG_KEY_12345",

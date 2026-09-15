@@ -53,3 +53,7 @@ frontend/build/
 *.swo
 .DS_Store
 Thumbs.db
+
+# Dynamic Storage Uploads
+storage_uploads/
+

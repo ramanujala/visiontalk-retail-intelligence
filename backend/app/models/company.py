@@ -23,3 +23,4 @@ class Company(Base):
     # Relationships
     users = relationship("User", back_populates="company", cascade="all, delete-orphan")
     stores = relationship("Store", back_populates="company", cascade="all, delete-orphan")
+    images = relationship("Image", back_populates="company", cascade="all, delete-orphan")
