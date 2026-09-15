@@ -8,6 +8,8 @@ from app.core.exceptions import (
     global_exception_handler
 )
 from app.api.v1.health import router as health_router
+from app.api.v1.auth import router as auth_router
+from app.api.v1.stores import router as stores_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -17,7 +19,7 @@ app = FastAPI(
     redoc_url=f"{settings.API_V1_STR}/redoc"
 )
 
-# Configure CORS Middleware using settings.CORS_ORIGINS
+# Configure CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -26,13 +28,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Exception Handlers Registration
+# Register Exception Handlers
 app.add_exception_handler(VisionTalkException, visiontalk_exception_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(Exception, global_exception_handler)
 
-# Include Routers
+# Include API Routers
 app.include_router(health_router, prefix=settings.API_V1_STR)
+app.include_router(auth_router, prefix=settings.API_V1_STR)
+app.include_router(stores_router, prefix=settings.API_V1_STR)
 
 
 @app.get("/")

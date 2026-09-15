@@ -32,6 +32,14 @@ class Settings(BaseSettings):
     # Storage Configuration
     STORAGE_DIR: str = "storage_uploads"
 
+    # JWT Authentication Configuration
+    JWT_SECRET_KEY: str = Field(
+        default="DEV_ONLY_SECRET_KEY_CHANGE_IN_PRODUCTION_32BYTES_LONG_KEY_12345",
+        description="Secret key for signing JWT tokens"
+    )
+    JWT_ALGORITHM: str = "HS256"
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

@@ -11,10 +11,11 @@ An enterprise-grade, AI-powered retail visual intelligence platform that convert
 
 ---
 
-## 🚦 Project Status: PHASE 1 COMPLETE
+## 🚦 Project Status
 
 - [x] **Phase 0 — Architecture & Planning**: Architecture design, database schema, API contract, ML strategy, and guidelines documented.
 - [x] **Phase 1 — Project Foundation**: Modular FastAPI backend, React 18 + TypeScript frontend shell, PostgreSQL configuration, StorageService abstraction, health check endpoints (liveness & readiness), Docker Compose setup, and Pytest/Vitest testing suites.
+- [x] **Phase 2 — Multi-Tenant Foundation & Authentication**: Relational domain models (`Company`, `User`, `Store`), Alembic database migrations, bcrypt password hashing, JWT authentication, atomic company registration, strict backend tenant isolation, role authorization, tenant Store APIs, React authentication UI, and comprehensive Pytest/Vitest test suites.
 
 ---
 
@@ -52,6 +53,20 @@ For detailed specs, refer to:
 
 ---
 
+## 🔐 Multi-Tenant Identity & Access Architecture
+
+```
+Company (Tenant)
+  ├── Users (ADMIN, MANAGER, STAFF)
+  └── Stores (Tenant Isolated Locations)
+```
+
+1. **Strict Backend Tenant Isolation**: Every query execution at the backend database layer enforces `company_id == current_user.company_id`. Attempts to access another company's store or resource return `404 Not Found` to prevent leaking cross-tenant data.
+2. **Atomic Registration**: `POST /api/v1/auth/register` creates the `Company` tenant and its primary `ADMIN` user inside a single database transaction.
+3. **JWT Authentication**: Bearer tokens are signed via environment `JWT_SECRET_KEY` and carry `sub: user_id`, `company_id`, and `role` claims.
+
+---
+
 ## 🛠️ Prerequisites
 
 - **Python**: 3.11+
@@ -69,7 +84,14 @@ Copy the template `.env.example` file to `.env`:
 cp .env.example .env
 ```
 
-### 2. Backend Setup & Local Server
+### 2. Database Migrations (Alembic)
+Apply database migrations to set up PostgreSQL tables:
+```bash
+cd backend
+alembic upgrade head
+```
+
+### 3. Backend Setup & Local Server
 Create a virtual environment, install dependencies, and launch FastAPI:
 ```bash
 # Create virtual environment
@@ -87,7 +109,7 @@ uvicorn app.main:app --reload --port 8000
 ```
 Backend will be available at `http://localhost:8000`. API documentation is accessible at `http://localhost:8000/api/v1/docs`.
 
-### 3. Frontend Setup & React Shell
+### 4. Frontend Setup & React Shell
 Install npm packages and launch Vite development server:
 ```bash
 cd frontend
@@ -113,19 +135,7 @@ docker compose up -d --build
 ## 🧪 Testing Protocols
 
 ### Backend Pytest Suite
-Run unit tests (no database required):
-```bash
-cd backend
-pytest -m "not integration"
-```
-
-Run integration tests (verifies PostgreSQL readiness):
-```bash
-cd backend
-pytest -m integration
-```
-
-Run complete test suite:
+Run unit and tenant-isolation integration tests:
 ```bash
 cd backend
 pytest
@@ -136,41 +146,6 @@ Run React component unit tests:
 ```bash
 cd frontend
 npm test
-```
-
----
-
-## 📂 Repository Layout
-
-```
-visiontalk-retail-intelligence/
-├── backend/
-│   ├── app/
-│   │   ├── api/v1/health.py     # Liveness & Readiness endpoints
-│   │   ├── core/                # Config (CORS, DB, env), exceptions, database session
-│   │   ├── schemas/             # Pydantic data schemas
-│   │   ├── services/storage/    # StorageService abstraction & LocalStorageProvider
-│   │   └── main.py              # FastAPI app entry point
-│   ├── tests/                   # Pytest test suite
-│   ├── pytest.ini               # Pytest markers config
-│   ├── requirements.txt         # Python dependencies
-│   └── Dockerfile
-├── frontend/
-│   ├── src/
-│   │   ├── components/          # HealthCard component
-│   │   ├── services/            # API fetch client
-│   │   ├── types/               # TypeScript interface definitions
-│   │   ├── App.tsx              # App shell
-│   │   └── main.tsx             # React DOM entry
-│   ├── tests/                   # Vitest unit tests
-│   ├── package.json             # NPM dependencies
-│   ├── vite.config.ts           # Vite + Vitest config
-│   └── Dockerfile
-├── docs/                        # Phase 0 Architecture Specifications
-├── docker-compose.yml           # Docker services declaration
-├── .env.example                 # Environment template
-├── .gitignore
-└── README.md
 ```
 
 ---
