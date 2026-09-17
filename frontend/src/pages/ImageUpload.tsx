@@ -7,9 +7,10 @@ import styles from './Auth.module.css';
 interface ImageUploadProps {
   token: string;
   stores: Store[];
+  onSelectImageForAnalysis?: (image: ImageItem) => void;
 }
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({ token, stores }) => {
+export const ImageUpload: React.FC<ImageUploadProps> = ({ token, stores, onSelectImageForAnalysis }) => {
   const [selectedStoreId, setSelectedStoreId] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -178,9 +179,28 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ token, stores }) => {
               </div>
 
               <div style={{ marginTop: '1rem', paddingTop: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                  {new Date(img.created_at).toLocaleDateString()}
-                </span>
+                {onSelectImageForAnalysis ? (
+                  <button
+                    onClick={() => onSelectImageForAnalysis(img)}
+                    style={{
+                      backgroundColor: 'var(--primary-color, #3b82f6)',
+                      border: 'none',
+                      color: '#ffffff',
+                      padding: '0.3rem 0.8rem',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: 600
+                    }}
+                  >
+                    Analyze Objects
+                  </button>
+                ) : (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    {new Date(img.created_at).toLocaleDateString()}
+                  </span>
+                )}
+
                 <button
                   onClick={() => handleDelete(img.id)}
                   style={{

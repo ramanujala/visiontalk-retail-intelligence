@@ -40,6 +40,13 @@ class Settings(BaseSettings):
     MAX_IMAGE_HEIGHT: int = 8000
     ALLOWED_IMAGE_MIME_TYPES: List[str] = ["image/jpeg", "image/png", "image/webp"]
 
+    # YOLO Object Detection Configuration
+    YOLO_MODEL_PATH: str = "yolov8n.pt"
+    YOLO_CONFIDENCE_THRESHOLD: float = 0.25
+    YOLO_IOU_THRESHOLD: float = 0.45
+    YOLO_DEVICE: str = "cpu"
+
+
     # JWT Authentication Configuration
     JWT_SECRET_KEY: str = Field(
         default="DEV_ONLY_SECRET_KEY_CHANGE_IN_PRODUCTION_32BYTES_LONG_KEY_12345",

@@ -3,6 +3,7 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Stores } from './pages/Stores';
 import { ImageUpload } from './pages/ImageUpload';
+import { ObjectDetectionView } from './pages/ObjectDetectionView';
 import { HealthCard } from './components/HealthCard';
 import { fetchLiveness, fetchReadiness } from './services/api';
 import { fetchMe } from './services/auth';
@@ -10,6 +11,7 @@ import { fetchStores } from './services/stores';
 import { LivenessStatus, ReadinessStatus } from './types/health';
 import { User } from './types/auth';
 import { Store } from './types/store';
+import { ImageItem } from './types/image';
 import styles from './App.module.css';
 import authStyles from './pages/Auth.module.css';
 
@@ -18,7 +20,8 @@ export const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
-  const [activeTab, setActiveTab] = useState<'stores' | 'images'>('images');
+  const [activeTab, setActiveTab] = useState<'stores' | 'images' | 'detection'>('images');
+  const [selectedImageForAnalysis, setSelectedImageForAnalysis] = useState<ImageItem | null>(null);
 
   // System Health state
   const [liveness, setLiveness] = useState<LivenessStatus | null>(null);
@@ -80,12 +83,17 @@ export const App: React.FC = () => {
     setStores([]);
   };
 
+  const handleSelectImageForAnalysis = (img: ImageItem) => {
+    setSelectedImageForAnalysis(img);
+    setActiveTab('detection');
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.brandHeader}>
         <h1 className={styles.logo}>VisionTalk Retail Intelligence</h1>
         <p className={styles.tagline}>
-          AI-Powered Retail Visual Intelligence Platform — Image Ingestion System
+          AI-Powered Retail Visual Intelligence Platform — Perception Layer (YOLO Object Detection)
         </p>
       </header>
 
@@ -147,8 +155,18 @@ export const App: React.FC = () => {
         ) : (
           <Register onSuccess={handleLoginSuccess} onSwitchToLogin={() => setAuthView('login')} />
         )
+      ) : activeTab === 'detection' && selectedImageForAnalysis ? (
+        <ObjectDetectionView
+          token={token}
+          image={selectedImageForAnalysis}
+          onBack={() => setActiveTab('images')}
+        />
       ) : activeTab === 'images' ? (
-        <ImageUpload token={token} stores={stores} />
+        <ImageUpload
+          token={token}
+          stores={stores}
+          onSelectImageForAnalysis={handleSelectImageForAnalysis}
+        />
       ) : (
         <Stores token={token} />
       )}

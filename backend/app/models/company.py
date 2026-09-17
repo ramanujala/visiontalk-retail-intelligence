@@ -24,3 +24,4 @@ class Company(Base):
     users = relationship("User", back_populates="company", cascade="all, delete-orphan")
     stores = relationship("Store", back_populates="company", cascade="all, delete-orphan")
     images = relationship("Image", back_populates="company", cascade="all, delete-orphan")
+    analysis_runs = relationship("AnalysisRun", back_populates="company", cascade="all, delete-orphan")

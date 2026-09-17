@@ -33,3 +33,4 @@ class User(Base):
     # Relationships
     company = relationship("Company", back_populates="users")
     images = relationship("Image", back_populates="uploader", cascade="all, delete-orphan")
+    analysis_runs = relationship("AnalysisRun", back_populates="initiator", cascade="all, delete-orphan")
