@@ -19,6 +19,7 @@ An enterprise-grade, AI-powered retail visual intelligence platform that convert
 - [x] **Phase 3 — Image Ingestion, Validation & Storage**: Image model (`Image`), Alembic migration (`002_phase3_images_schema`), image upload API (`POST /api/v1/images`), MIME/header/dimension/size file validation, Pillow decoding check, SHA-256 checksum generation, deterministic OpenCV image quality assessment (score & flags), secure storage pathing (`{company_id}/{store_id}/{uuid}.jpg`), tenant-isolated listing/detail/deletion APIs, React ImageUpload UI, and comprehensive Pytest/Vitest tests.
 - [x] **Phase 4 — Object Detection Pipeline (Perception Layer)**: Ultralytics YOLO baseline integration, modular lazy model loader (`get_yolo_model`), `AnalysisRun` and `Detection` database models, Alembic migration (`003_phase4_object_detection_schema`), synchronous detection workflow (`POST /api/v1/detections/analyze/{image_id}`), tenant isolation enforcement, duplicate analysis prevention, REST APIs for analysis details/summaries, responsive React `DetectionOverlay` bounding box visualizer, and comprehensive Pytest/Vitest test suites.
 - [x] **Phase 5 — OCR & Text Extraction Pipeline (Text Perception)**: PaddleOCR engine integration, lazy model loader (`get_paddle_ocr_engine`), `OCRResult` database model, Alembic migration (`004_phase5_ocr_schema`), synchronous text extraction workflow (`POST /api/v1/ocr/analyze/{image_id}`), deterministic whitespace normalization, tenant isolation enforcement, duplicate analysis reuse, REST APIs (`/api/v1/ocr`), responsive React `OCROverlay` bounding box visualizer & `OCRView`, and comprehensive Pytest/Vitest test suites.
+- [x] **Phase 6 — Evidence Engine (Normalization & Aggregation)**: Deterministic spatial utilities (`BoundingBox`, IoU, overlap ratio, containment, center distance), canonical Pydantic schemas (`CanonicalEvidenceResponse`), `EvidenceEngine` domain service, multi-tenant Evidence API (`/api/v1/evidence`), deterministic detection-OCR spatial association, versioned canonical snapshots (`1.0`), React `EvidenceOverlay` & `EvidenceView`, and comprehensive Pytest/Vitest test suites.
 
 ---
 
@@ -35,8 +36,8 @@ VisionTalk decomposes retail shelf analysis into three decoupled conceptual laye
                                     v
 +-----------------------------------------------------------------------+
 |                          LAYER 2: EVIDENCE                            |
-|             Structured JSON Evidence (Bounding Boxes,                 |
-|           Spatial Coordinates, Text Confidence, Signatures)           |
+|       Evidence Engine: Normalization, Spatial Relationships &         |
+|     Canonical JSON Snapshot (No Business/LLM Decisions Performed)     |
 +-----------------------------------+-----------------------------------+
                                     |
                                     v
@@ -47,6 +48,15 @@ VisionTalk decomposes retail shelf analysis into three decoupled conceptual laye
 |            Grounded Multimodal LLM (Gemini 2.5/3 Flash)               |
 +-----------------------------------------------------------------------+
 ```
+
+### Evidence Engine Principles
+
+> **Note**: The Evidence Engine does not perform business reasoning. It creates a deterministic, structured canonical representation of observations produced by perception systems (YOLO + PaddleOCR).
+
+1. **Observations Preservation**: Raw class names, bounding boxes, text strings, and confidences are preserved without lossy transformation.
+2. **Deterministic Spatial Associations**: Computes geometric relationships (IoU, containment, overlap ratio, center distance) between detected objects and OCR text regions without assuming product SKUs or prices.
+3. **Canonical Versioning**: Evidence payloads emit explicit `evidence_version: "1.0"` metadata for downstream consumption.
+4. **Tenant Isolation**: Every evidence generation/retrieval query strictly verifies `company_id == current_user.company_id`.
 
 For detailed specs, refer to:
 - [docs/ARCHITECTURE.md](file:///c:/Users/raman/OneDrive/Desktop/visiontalkai/docs/ARCHITECTURE.md)

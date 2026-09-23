@@ -9,13 +9,15 @@ interface ImageUploadProps {
   stores: Store[];
   onSelectImageForAnalysis?: (image: ImageItem) => void;
   onSelectImageForOCR?: (image: ImageItem) => void;
+  onSelectImageForEvidence?: (image: ImageItem) => void;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   token,
   stores,
   onSelectImageForAnalysis,
-  onSelectImageForOCR
+  onSelectImageForOCR,
+  onSelectImageForEvidence
 }) => {
   const [selectedStoreId, setSelectedStoreId] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
@@ -218,6 +220,23 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                       }}
                     >
                       OCR Text
+                    </button>
+                  )}
+                  {onSelectImageForEvidence && (
+                    <button
+                      onClick={() => onSelectImageForEvidence(img)}
+                      style={{
+                        backgroundColor: '#f59e0b',
+                        border: 'none',
+                        color: '#ffffff',
+                        padding: '0.3rem 0.6rem',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        fontWeight: 600
+                      }}
+                    >
+                      Evidence
                     </button>
                   )}
                 </div>

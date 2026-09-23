@@ -5,6 +5,7 @@ import { Stores } from './pages/Stores';
 import { ImageUpload } from './pages/ImageUpload';
 import { ObjectDetectionView } from './pages/ObjectDetectionView';
 import { OCRView } from './pages/OCRView';
+import { EvidenceView } from './pages/EvidenceView';
 import { HealthCard } from './components/HealthCard';
 import { fetchLiveness, fetchReadiness } from './services/api';
 import { fetchMe } from './services/auth';
@@ -21,7 +22,7 @@ export const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
-  const [activeTab, setActiveTab] = useState<'stores' | 'images' | 'detection' | 'ocr'>('images');
+  const [activeTab, setActiveTab] = useState<'stores' | 'images' | 'detection' | 'ocr' | 'evidence'>('images');
   const [selectedImageForAnalysis, setSelectedImageForAnalysis] = useState<ImageItem | null>(null);
 
   // System Health state
@@ -92,6 +93,11 @@ export const App: React.FC = () => {
   const handleSelectImageForOCR = (img: ImageItem) => {
     setSelectedImageForAnalysis(img);
     setActiveTab('ocr');
+  };
+
+  const handleSelectImageForEvidence = (img: ImageItem) => {
+    setSelectedImageForAnalysis(img);
+    setActiveTab('evidence');
   };
 
   return (
@@ -173,12 +179,19 @@ export const App: React.FC = () => {
           image={selectedImageForAnalysis}
           onBack={() => setActiveTab('images')}
         />
+      ) : activeTab === 'evidence' && selectedImageForAnalysis ? (
+        <EvidenceView
+          token={token}
+          image={selectedImageForAnalysis}
+          onBack={() => setActiveTab('images')}
+        />
       ) : activeTab === 'images' ? (
         <ImageUpload
           token={token}
           stores={stores}
           onSelectImageForAnalysis={handleSelectImageForAnalysis}
           onSelectImageForOCR={handleSelectImageForOCR}
+          onSelectImageForEvidence={handleSelectImageForEvidence}
         />
       ) : (
         <Stores token={token} />
