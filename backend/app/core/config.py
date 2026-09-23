@@ -46,6 +46,13 @@ class Settings(BaseSettings):
     YOLO_IOU_THRESHOLD: float = 0.45
     YOLO_DEVICE: str = "cpu"
 
+    # OCR & Text Extraction Configuration
+    OCR_ENABLED: bool = True
+    OCR_LANGUAGE: str = "en"
+    OCR_CONFIDENCE_THRESHOLD: float = 0.50
+    OCR_USE_ANGLE_CLS: bool = True
+    OCR_DEVICE: str = "cpu"
+
 
     # JWT Authentication Configuration
     JWT_SECRET_KEY: str = Field(

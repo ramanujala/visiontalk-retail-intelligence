@@ -4,6 +4,7 @@ import { Register } from './pages/Register';
 import { Stores } from './pages/Stores';
 import { ImageUpload } from './pages/ImageUpload';
 import { ObjectDetectionView } from './pages/ObjectDetectionView';
+import { OCRView } from './pages/OCRView';
 import { HealthCard } from './components/HealthCard';
 import { fetchLiveness, fetchReadiness } from './services/api';
 import { fetchMe } from './services/auth';
@@ -20,7 +21,7 @@ export const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
-  const [activeTab, setActiveTab] = useState<'stores' | 'images' | 'detection'>('images');
+  const [activeTab, setActiveTab] = useState<'stores' | 'images' | 'detection' | 'ocr'>('images');
   const [selectedImageForAnalysis, setSelectedImageForAnalysis] = useState<ImageItem | null>(null);
 
   // System Health state
@@ -88,12 +89,17 @@ export const App: React.FC = () => {
     setActiveTab('detection');
   };
 
+  const handleSelectImageForOCR = (img: ImageItem) => {
+    setSelectedImageForAnalysis(img);
+    setActiveTab('ocr');
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.brandHeader}>
         <h1 className={styles.logo}>VisionTalk Retail Intelligence</h1>
         <p className={styles.tagline}>
-          AI-Powered Retail Visual Intelligence Platform — Perception Layer (YOLO Object Detection)
+          AI-Powered Retail Visual Intelligence Platform — Perception Layer (YOLO + PaddleOCR)
         </p>
       </header>
 
@@ -161,11 +167,18 @@ export const App: React.FC = () => {
           image={selectedImageForAnalysis}
           onBack={() => setActiveTab('images')}
         />
+      ) : activeTab === 'ocr' && selectedImageForAnalysis ? (
+        <OCRView
+          token={token}
+          image={selectedImageForAnalysis}
+          onBack={() => setActiveTab('images')}
+        />
       ) : activeTab === 'images' ? (
         <ImageUpload
           token={token}
           stores={stores}
           onSelectImageForAnalysis={handleSelectImageForAnalysis}
+          onSelectImageForOCR={handleSelectImageForOCR}
         />
       ) : (
         <Stores token={token} />

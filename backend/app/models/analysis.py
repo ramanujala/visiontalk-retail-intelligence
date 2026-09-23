@@ -15,6 +15,7 @@ class AnalysisRunStatus:
 
 class AnalysisType:
     OBJECT_DETECTION = "OBJECT_DETECTION"
+    OCR = "OCR"
 
 
 class AnalysisRun(Base):
@@ -52,6 +53,7 @@ class AnalysisRun(Base):
     image = relationship("Image", back_populates="analysis_runs")
     initiator = relationship("User", back_populates="analysis_runs")
     detections = relationship("Detection", back_populates="analysis_run", cascade="all, delete-orphan")
+    ocr_results = relationship("OCRResult", back_populates="analysis_run", cascade="all, delete-orphan")
 
 
 class Detection(Base):
@@ -79,4 +81,33 @@ class Detection(Base):
 
     # Relationships
     analysis_run = relationship("AnalysisRun", back_populates="detections")
+    company = relationship("Company")
+
+
+class OCRResult(Base):
+    __tablename__ = "ocr_results"
+
+    id = Column(GUID(), primary_key=True, default=uuid.uuid4, index=True)
+    analysis_run_id = Column(GUID(), ForeignKey("analysis_runs.id", ondelete="CASCADE"), nullable=False, index=True)
+    company_id = Column(GUID(), ForeignKey("companies.id", ondelete="CASCADE"), nullable=False, index=True)
+
+    text = Column(Text, nullable=False)
+    normalized_text = Column(Text, nullable=False)
+    confidence = Column(Float, nullable=False)
+    line_order = Column(Integer, nullable=False, default=0)
+
+    x_min = Column(Float, nullable=False)
+    y_min = Column(Float, nullable=False)
+    x_max = Column(Float, nullable=False)
+    y_max = Column(Float, nullable=False)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+        index=True
+    )
+
+    # Relationships
+    analysis_run = relationship("AnalysisRun", back_populates="ocr_results")
     company = relationship("Company")

@@ -12,6 +12,7 @@ from app.api.v1.auth import router as auth_router
 from app.api.v1.stores import router as stores_router
 from app.api.v1.images import router as images_router
 from app.api.v1.detections import router as detections_router
+from app.api.v1.ocr import router as ocr_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -41,6 +42,7 @@ app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(stores_router, prefix=settings.API_V1_STR)
 app.include_router(images_router, prefix=settings.API_V1_STR)
 app.include_router(detections_router, prefix=settings.API_V1_STR)
+app.include_router(ocr_router, prefix=settings.API_V1_STR)
 
 
 @app.get("/")
