@@ -10,6 +10,7 @@ interface ImageUploadProps {
   onSelectImageForAnalysis?: (image: ImageItem) => void;
   onSelectImageForOCR?: (image: ImageItem) => void;
   onSelectImageForEvidence?: (image: ImageItem) => void;
+  onSelectImageForExpectedActual?: (image: ImageItem) => void;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -17,7 +18,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   stores,
   onSelectImageForAnalysis,
   onSelectImageForOCR,
-  onSelectImageForEvidence
+  onSelectImageForEvidence,
+  onSelectImageForExpectedActual
 }) => {
   const [selectedStoreId, setSelectedStoreId] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
@@ -237,6 +239,23 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                       }}
                     >
                       Evidence
+                    </button>
+                  )}
+                  {onSelectImageForExpectedActual && (
+                    <button
+                      onClick={() => onSelectImageForExpectedActual(img)}
+                      style={{
+                        backgroundColor: '#10b981',
+                        border: 'none',
+                        color: '#ffffff',
+                        padding: '0.3rem 0.6rem',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        fontWeight: 600
+                      }}
+                    >
+                      Compare
                     </button>
                   )}
                 </div>
