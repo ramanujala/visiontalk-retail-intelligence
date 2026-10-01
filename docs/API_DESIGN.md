@@ -98,6 +98,39 @@ Processes user questions against an analysis run using the Question Router.
 
 ---
 
+### 2.7 Compliance Rules Engine (`/compliance-rules` & `/compliance`)
+
+#### `POST /api/v1/compliance-rules`
+Creates a new retail compliance rule for the tenant company. (Requires ADMIN or MANAGER role).
+
+#### `GET /api/v1/compliance-rules`
+Lists active compliance rules filtered by company tenant and optional `store_id`.
+
+#### `GET /api/v1/compliance-rules/{rule_id}`
+Retrieves a specific compliance rule by UUID.
+
+#### `PUT /api/v1/compliance-rules/{rule_id}`
+Updates a compliance rule (Requires ADMIN or MANAGER role).
+
+#### `DELETE /api/v1/compliance-rules/{rule_id}`
+Deletes a compliance rule (Requires ADMIN role).
+
+#### `POST /api/v1/compliance/analyze/{image_id}`
+Triggers deterministic compliance rule evaluation against Layer 2 Evidence and Layer 3 Expected-vs-Actual results.
+- **Query Parameter**: `force_reanalyze` (boolean, optional default `false`)
+- **Response**: Returns structured compliance findings (`PASS`, `FAIL`, `WARNING`), summary counts, and evidence traceability references.
+
+#### `GET /api/v1/compliance/image/{image_id}`
+Retrieves compliance findings for an image.
+
+#### `GET /api/v1/compliance/finding/{finding_id}`
+Retrieves details for a specific compliance finding.
+
+#### `GET /api/v1/compliance/image/{image_id}/summary`
+Retrieves aggregated compliance rule summary metrics (`total_rules`, `passed`, `failed`, `warnings`, `critical_findings`, `high_findings`, `medium_findings`, `low_findings`).
+
+---
+
 ### 2.6 Audit Comparisons (`/comparisons`)
 
 #### `POST /api/v1/comparisons/diff`

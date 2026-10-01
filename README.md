@@ -21,12 +21,13 @@ An enterprise-grade, AI-powered retail visual intelligence platform that convert
 - [x] **Phase 5 — OCR & Text Extraction Pipeline (Text Perception)**: PaddleOCR engine integration, lazy model loader (`get_paddle_ocr_engine`), `OCRResult` database model, Alembic migration (`004_phase5_ocr_schema`), synchronous text extraction workflow (`POST /api/v1/ocr/analyze/{image_id}`), deterministic whitespace normalization, tenant isolation enforcement, duplicate analysis reuse, REST APIs (`/api/v1/ocr`), responsive React `OCROverlay` bounding box visualizer & `OCRView`, and comprehensive Pytest/Vitest test suites.
 - [x] **Phase 6 — Evidence Engine (Normalization & Aggregation)**: Deterministic spatial utilities (`BoundingBox`, IoU, overlap ratio, containment, center distance), canonical Pydantic schemas (`CanonicalEvidenceResponse`), `EvidenceEngine` domain service, multi-tenant Evidence API (`/api/v1/evidence`), deterministic detection-OCR spatial association, versioned canonical snapshots (`1.0`), React `EvidenceOverlay` & `EvidenceView`, and comprehensive Pytest/Vitest test suites.
 - [x] **Phase 7 — Expected vs Actual Analysis (Structured Reasoning)**: `ExpectedProduct` ORM model, Alembic migration (`005_phase7_expected_actual_schema`), Expected Products CRUD API (`/api/v1/expected-products`), deterministic matching strategy, comparison status evaluation (`OBSERVED`, `MISSING`, `LOW_STOCK`, `EXCESS`, `UNEXPECTED`, `UNMATCHED`), explainable issue generation, evidence traceability, Expected vs Actual API (`/api/v1/analysis/expected-vs-actual`), React `ExpectedProductManager` & `ExpectedActualView`, and comprehensive Pytest/Vitest test suites.
+- [x] **Phase 8 — Retail Compliance Rules Engine**: `ComplianceRule` and `ComplianceFinding` ORM models, Alembic migration (`006_phase8_compliance_rules_schema`), Rule CRUD API (`/api/v1/compliance-rules`), Compliance Engine service, deterministic rule evaluation (`PRODUCT_REQUIRED`, `PRODUCT_QUANTITY`, `UNEXPECTED_PRODUCT`, `PRODUCT_ZONE`, `OCR_REQUIRED`, `CUSTOM_THRESHOLD`), severity levels (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`), structured findings & deterministic messages, full evidence traceability, Compliance API (`/api/v1/compliance`), React `ComplianceRuleManager` & `ComplianceView`, strict multi-tenant isolation & RBAC, and comprehensive Pytest/Vitest test suites.
 
 ---
 
 ## 🏗️ System Architecture & Layer Breakdown
 
-VisionTalk decomposes retail shelf analysis into three decoupled conceptual layers:
+VisionTalk decomposes retail shelf analysis into decoupled conceptual layers:
 
 ```
 +-----------------------------------------------------------------------+
@@ -43,10 +44,20 @@ VisionTalk decomposes retail shelf analysis into three decoupled conceptual laye
                                     |
                                     v
 +-----------------------------------------------------------------------+
-|                          LAYER 3: REASONING                           |
-|   Phase 7: Deterministic Rules (Expected vs Actual, Statuses,         |
-|     Discrepancies, Issues & Full Traceability to Canonical Evidence)  |
-|                                   +                                   |
+|                      LAYER 3: EXPECTED VS ACTUAL                      |
+|  Phase 7: Deterministic Inventory Comparison & Discrepancy Tracking   |
++-----------------------------------+-----------------------------------+
+                                    |
+                                    v
++-----------------------------------------------------------------------+
+|                 LAYER 4: COMPLIANCE RULES ENGINE                      |
+|   Phase 8: Business Rule Checks (Required, Quantity, Zone, OCR),      |
+|    Severity Grading & Traceable Findings (Strictly Deterministic)     |
++-----------------------------------+-----------------------------------+
+                                    |
+                                    v
++-----------------------------------------------------------------------+
+|                      LAYER 5: AI REASONING (FUTURE)                    |
 |       Future: Grounded Multimodal LLM (Gemini 2.5/3 Flash)            |
 +-----------------------------------------------------------------------+
 ```

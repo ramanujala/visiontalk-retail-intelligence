@@ -17,6 +17,7 @@ class AnalysisType:
     OBJECT_DETECTION = "OBJECT_DETECTION"
     OCR = "OCR"
     EXPECTED_VS_ACTUAL = "EXPECTED_VS_ACTUAL"
+    COMPLIANCE = "COMPLIANCE"
 
 
 class AnalysisRun(Base):
@@ -57,6 +58,7 @@ class AnalysisRun(Base):
     ocr_results = relationship("OCRResult", back_populates="analysis_run", cascade="all, delete-orphan")
     expected_actual_items = relationship("ExpectedActualItem", back_populates="analysis_run", cascade="all, delete-orphan")
     expected_actual_issues = relationship("ExpectedActualIssue", back_populates="analysis_run", cascade="all, delete-orphan")
+    compliance_findings = relationship("ComplianceFinding", back_populates="analysis_run", cascade="all, delete-orphan")
 
 
 class Detection(Base):

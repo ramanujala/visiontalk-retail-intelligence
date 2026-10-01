@@ -7,7 +7,9 @@ import { ObjectDetectionView } from './pages/ObjectDetectionView';
 import { OCRView } from './pages/OCRView';
 import { EvidenceView } from './pages/EvidenceView';
 import { ExpectedActualView } from './pages/ExpectedActualView';
+import { ComplianceView } from './pages/ComplianceView';
 import { ExpectedProductManager } from './components/ExpectedProductManager';
+import { ComplianceRuleManager } from './components/ComplianceRuleManager';
 import { HealthCard } from './components/HealthCard';
 import { fetchLiveness, fetchReadiness } from './services/api';
 import { fetchMe } from './services/auth';
@@ -24,7 +26,7 @@ export const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
-  const [activeTab, setActiveTab] = useState<'stores' | 'images' | 'detection' | 'ocr' | 'evidence' | 'expected_actual' | 'planogram'>('images');
+  const [activeTab, setActiveTab] = useState<'stores' | 'images' | 'detection' | 'ocr' | 'evidence' | 'expected_actual' | 'planogram' | 'compliance_rules' | 'compliance'>('images');
   const [selectedImageForAnalysis, setSelectedImageForAnalysis] = useState<ImageItem | null>(null);
 
   // System Health state
@@ -107,6 +109,11 @@ export const App: React.FC = () => {
     setActiveTab('expected_actual');
   };
 
+  const handleSelectImageForCompliance = (img: ImageItem) => {
+    setSelectedImageForAnalysis(img);
+    setActiveTab('compliance');
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.brandHeader}>
@@ -177,7 +184,22 @@ export const App: React.FC = () => {
               cursor: 'pointer'
             }}
           >
-            Expectated Products
+            Expected Products
+          </button>
+          <button
+            onClick={() => setActiveTab('compliance_rules')}
+            style={{
+              flex: 1,
+              padding: '0.8rem',
+              borderRadius: '8px',
+              border: 'none',
+              backgroundColor: activeTab === 'compliance_rules' ? 'var(--primary-color, #3b82f6)' : 'rgba(255,255,255,0.05)',
+              color: '#fff',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            Compliance Rules
           </button>
         </div>
       )}
@@ -213,6 +235,14 @@ export const App: React.FC = () => {
           image={selectedImageForAnalysis}
           onBack={() => setActiveTab('images')}
         />
+      ) : activeTab === 'compliance' && selectedImageForAnalysis ? (
+        <ComplianceView
+          token={token}
+          image={selectedImageForAnalysis}
+          onBack={() => setActiveTab('images')}
+        />
+      ) : activeTab === 'compliance_rules' ? (
+        <ComplianceRuleManager token={token} stores={stores} userRole={user.role} />
       ) : activeTab === 'planogram' ? (
         <ExpectedProductManager token={token} stores={stores} />
       ) : activeTab === 'images' ? (
@@ -223,6 +253,7 @@ export const App: React.FC = () => {
           onSelectImageForOCR={handleSelectImageForOCR}
           onSelectImageForEvidence={handleSelectImageForEvidence}
           onSelectImageForExpectedActual={handleSelectImageForExpectedActual}
+          onSelectImageForCompliance={handleSelectImageForCompliance}
         />
       ) : (
         <Stores token={token} />

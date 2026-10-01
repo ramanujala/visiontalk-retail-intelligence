@@ -16,6 +16,13 @@ from app.models.analysis import (
     ExpectedActualIssueSeverity
 )
 from app.models.expected_product import ExpectedProduct
+from app.models.compliance_rule import (
+    ComplianceRule,
+    ComplianceFinding,
+    RuleType,
+    RuleSeverity,
+    FindingStatus
+)
 
 __all__ = [
     "Base",
@@ -31,9 +38,14 @@ __all__ = [
     "ExpectedActualItem",
     "ExpectedActualIssue",
     "ExpectedProduct",
+    "ComplianceRule",
+    "ComplianceFinding",
     "AnalysisRunStatus",
     "AnalysisType",
     "ExpectedActualItemStatus",
     "ExpectedActualIssueType",
     "ExpectedActualIssueSeverity",
+    "RuleType",
+    "RuleSeverity",
+    "FindingStatus",
 ]
