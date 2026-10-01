@@ -53,6 +53,14 @@ class Settings(BaseSettings):
     OCR_USE_ANGLE_CLS: bool = True
     OCR_DEVICE: str = "cpu"
 
+    # Gemini / Vision LLM Configuration (Phase 9)
+    GEMINI_API_KEY: str = Field(default="", description="Google GenAI API Key")
+    GEMINI_MODEL: str = Field(default="gemini-2.5-flash", description="Gemini Vision LLM model identifier")
+    GEMINI_ENABLED: bool = Field(default=True, description="Enable Gemini LLM explanation layer")
+    GEMINI_TEMPERATURE: float = Field(default=0.2, description="Sampling temperature for grounded explanations")
+    GEMINI_MAX_OUTPUT_TOKENS: int = Field(default=1024, description="Max tokens for LLM output")
+    LLM_MIN_CONFIDENCE_THRESHOLD: float = Field(default=0.30, description="Minimum evidence confidence threshold for explanation generation")
+
 
     # JWT Authentication Configuration
     JWT_SECRET_KEY: str = Field(

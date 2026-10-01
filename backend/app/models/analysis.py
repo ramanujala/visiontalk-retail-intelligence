@@ -18,6 +18,7 @@ class AnalysisType:
     OCR = "OCR"
     EXPECTED_VS_ACTUAL = "EXPECTED_VS_ACTUAL"
     COMPLIANCE = "COMPLIANCE"
+    LLM_EXPLANATION = "LLM_EXPLANATION"
 
 
 class AnalysisRun(Base):

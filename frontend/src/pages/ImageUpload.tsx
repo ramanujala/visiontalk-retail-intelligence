@@ -12,6 +12,7 @@ interface ImageUploadProps {
   onSelectImageForEvidence?: (image: ImageItem) => void;
   onSelectImageForExpectedActual?: (image: ImageItem) => void;
   onSelectImageForCompliance?: (image: ImageItem) => void;
+  onSelectImageForAIExplanation?: (image: ImageItem) => void;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -21,7 +22,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   onSelectImageForOCR,
   onSelectImageForEvidence,
   onSelectImageForExpectedActual,
-  onSelectImageForCompliance
+  onSelectImageForCompliance,
+  onSelectImageForAIExplanation
 }) => {
   const [selectedStoreId, setSelectedStoreId] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
@@ -275,6 +277,23 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                       }}
                     >
                       Compliance
+                    </button>
+                  )}
+                  {onSelectImageForAIExplanation && (
+                    <button
+                      onClick={() => onSelectImageForAIExplanation(img)}
+                      style={{
+                        backgroundColor: '#6366f1',
+                        border: 'none',
+                        color: '#ffffff',
+                        padding: '0.3rem 0.6rem',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        fontWeight: 600
+                      }}
+                    >
+                      AI Explain
                     </button>
                   )}
                 </div>

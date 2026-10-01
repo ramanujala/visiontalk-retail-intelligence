@@ -131,6 +131,18 @@ Retrieves aggregated compliance rule summary metrics (`total_rules`, `passed`, `
 
 ---
 
+### 2.8 Grounded Gemini LLM Explanations (`/llm`)
+
+#### `POST /api/v1/llm/explain/{image_id}`
+Generates a grounded natural-language explanation of retail shelf auditing results using the official `google-genai` SDK.
+- **Request Body**: `{ "force_reanalyze": false, "question_context": "Focus on missing products..." }`
+- **Response**: Returns `LLMExplanationResponse` containing explanation string, bullet-point `key_findings`, `confidence`, `fallback_reason`, and evidence traceability references.
+
+#### `GET /api/v1/llm/explanation/{analysis_run_id}`
+Retrieves stored LLM explanation analysis run details by ID.
+
+---
+
 ### 2.6 Audit Comparisons (`/comparisons`)
 
 #### `POST /api/v1/comparisons/diff`
