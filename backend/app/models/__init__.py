@@ -23,6 +23,7 @@ from app.models.compliance_rule import (
     RuleSeverity,
     FindingStatus
 )
+from app.models.conversation import Conversation, Message, MessageRole
 
 __all__ = [
     "Base",
@@ -48,4 +49,7 @@ __all__ = [
     "RuleType",
     "RuleSeverity",
     "FindingStatus",
+    "Conversation",
+    "Message",
+    "MessageRole"
 ]

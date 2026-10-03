@@ -9,6 +9,7 @@ import { EvidenceView } from './pages/EvidenceView';
 import { ExpectedActualView } from './pages/ExpectedActualView';
 import { ComplianceView } from './pages/ComplianceView';
 import { AIExplanationView } from './pages/AIExplanationView';
+import { ConversationView } from './pages/ConversationView';
 import { ExpectedProductManager } from './components/ExpectedProductManager';
 import { ComplianceRuleManager } from './components/ComplianceRuleManager';
 import { HealthCard } from './components/HealthCard';
@@ -27,7 +28,7 @@ export const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
   const [authView, setAuthView] = useState<'login' | 'register'>('login');
-  const [activeTab, setActiveTab] = useState<'stores' | 'images' | 'detection' | 'ocr' | 'evidence' | 'expected_actual' | 'planogram' | 'compliance_rules' | 'compliance' | 'ai_explanation'>('images');
+  const [activeTab, setActiveTab] = useState<'stores' | 'images' | 'detection' | 'ocr' | 'evidence' | 'expected_actual' | 'planogram' | 'compliance_rules' | 'compliance' | 'ai_explanation' | 'conversations'>('images');
   const [selectedImageForAnalysis, setSelectedImageForAnalysis] = useState<ImageItem | null>(null);
 
   // System Health state
@@ -120,6 +121,11 @@ export const App: React.FC = () => {
     setActiveTab('ai_explanation');
   };
 
+  const handleSelectImageForConversation = (img: ImageItem) => {
+    setSelectedImageForAnalysis(img);
+    setActiveTab('conversations');
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.brandHeader}>
@@ -207,6 +213,21 @@ export const App: React.FC = () => {
           >
             Compliance Rules
           </button>
+          <button
+            onClick={() => setActiveTab('conversations')}
+            style={{
+              flex: 1,
+              padding: '0.8rem',
+              borderRadius: '8px',
+              border: 'none',
+              backgroundColor: activeTab === 'conversations' ? 'var(--primary-color, #3b82f6)' : 'rgba(255,255,255,0.05)',
+              color: '#fff',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            Audit Chat
+          </button>
         </div>
       )}
 
@@ -253,6 +274,12 @@ export const App: React.FC = () => {
           image={selectedImageForAnalysis}
           onBack={() => setActiveTab('images')}
         />
+      ) : activeTab === 'conversations' ? (
+        <ConversationView
+          token={token}
+          selectedImageForContext={selectedImageForAnalysis}
+          onClearImageContext={() => setSelectedImageForAnalysis(null)}
+        />
       ) : activeTab === 'compliance_rules' ? (
         <ComplianceRuleManager token={token} stores={stores} userRole={user.role} />
       ) : activeTab === 'planogram' ? (
@@ -267,6 +294,7 @@ export const App: React.FC = () => {
           onSelectImageForExpectedActual={handleSelectImageForExpectedActual}
           onSelectImageForCompliance={handleSelectImageForCompliance}
           onSelectImageForAIExplanation={handleSelectImageForAIExplanation}
+          onSelectImageForConversation={handleSelectImageForConversation}
         />
       ) : (
         <Stores token={token} />

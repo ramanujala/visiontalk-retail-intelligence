@@ -58,6 +58,26 @@ The PostgreSQL database enforces clean multi-tenant isolation, storing metadata 
 - `width`: INTEGER
 - `height`: INTEGER
 - `file_size_bytes`: BIGINT
+
+### `conversations`
+- `id`: UUID (Primary Key)
+- `company_id`: UUID (Foreign Key -> companies.id)
+- `user_id`: UUID (Foreign Key -> users.id)
+- `title`: VARCHAR(255)
+- `is_archived`: BOOLEAN
+- `created_at`: TIMESTAMP WITH TIME ZONE
+- `updated_at`: TIMESTAMP WITH TIME ZONE
+
+### `messages`
+- `id`: UUID (Primary Key)
+- `conversation_id`: UUID (Foreign Key -> conversations.id)
+- `image_id`: UUID (Foreign Key -> images.id, Nullable)
+- `role`: VARCHAR(20) (`USER`, `ASSISTANT`, `SYSTEM`)
+- `content`: TEXT
+- `intent`: VARCHAR(50)
+- `route`: VARCHAR(50)
+- `msg_metadata`: JSONB
+- `created_at`: TIMESTAMP WITH TIME ZONE
 - `uploaded_at`: TIMESTAMP WITH TIME ZONE
 
 ### `analysis_runs`

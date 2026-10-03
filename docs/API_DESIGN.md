@@ -153,6 +153,25 @@ Evaluates a user's retail audit question and classifies it into an analysis capa
 
 ---
 
+### 2.10 Conversation System (`/conversations`)
+
+#### `POST /api/v1/conversations`
+Creates a new multi-turn conversation audit session for the authenticated user and company tenant.
+
+#### `GET /api/v1/conversations`
+Lists active audit conversation sessions for the authenticated user's tenant company.
+
+#### `GET /api/v1/conversations/{conversation_id}`
+Retrieves conversation session details including chronologically ordered message history (`messages`).
+
+#### `DELETE /api/v1/conversations/{conversation_id}`
+Archives a conversation session.
+
+#### `POST /api/v1/conversations/{conversation_id}/messages`
+Posts a user question message to a conversation. Triggers `QuestionRouter`, executes the selected route via `RouteExecutor`, records the Assistant response, and returns the response message.
+
+---
+
 ### 2.6 Audit Comparisons (`/comparisons`)
 
 #### `POST /api/v1/comparisons/diff`

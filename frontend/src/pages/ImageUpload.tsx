@@ -13,6 +13,7 @@ interface ImageUploadProps {
   onSelectImageForExpectedActual?: (image: ImageItem) => void;
   onSelectImageForCompliance?: (image: ImageItem) => void;
   onSelectImageForAIExplanation?: (image: ImageItem) => void;
+  onSelectImageForConversation?: (image: ImageItem) => void;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -23,7 +24,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   onSelectImageForEvidence,
   onSelectImageForExpectedActual,
   onSelectImageForCompliance,
-  onSelectImageForAIExplanation
+  onSelectImageForAIExplanation,
+  onSelectImageForConversation
 }) => {
   const [selectedStoreId, setSelectedStoreId] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
@@ -294,6 +296,23 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                       }}
                     >
                       AI Explain
+                    </button>
+                  )}
+                  {onSelectImageForConversation && (
+                    <button
+                      onClick={() => onSelectImageForConversation(img)}
+                      style={{
+                        backgroundColor: '#06b6d4',
+                        border: 'none',
+                        color: '#ffffff',
+                        padding: '0.3rem 0.6rem',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        fontWeight: 600
+                      }}
+                    >
+                      Chat
                     </button>
                   )}
                 </div>
