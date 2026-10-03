@@ -143,6 +143,16 @@ Retrieves stored LLM explanation analysis run details by ID.
 
 ---
 
+### 2.9 Question Router Architecture (`/questions`)
+
+#### `POST /api/v1/questions/route`
+Evaluates a user's retail audit question and classifies it into an analysis capability intent (`COUNT`, `AVAILABILITY`, `EXPECTED_VS_ACTUAL`, `COMPLIANCE`, `GENERAL`).
+- **Request Body**: `{ "question": "Which products are missing?", "image_id": "optional-uuid" }`
+- **Response**: Returns `QuestionRouteResult` containing `intent`, `route`, `confidence`, `reason`, and `target_service`.
+- **Tenant Security**: If `image_id` is supplied, validates that the image belongs to the authenticated user's tenant company.
+
+---
+
 ### 2.6 Audit Comparisons (`/comparisons`)
 
 #### `POST /api/v1/comparisons/diff`

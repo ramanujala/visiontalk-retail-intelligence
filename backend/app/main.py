@@ -19,6 +19,7 @@ from app.api.v1.expected_actual import router as expected_actual_router
 from app.api.v1.compliance_rules import router as compliance_rules_router
 from app.api.v1.compliance import router as compliance_router
 from app.api.v1.llm import router as llm_router
+from app.api.v1.questions import router as questions_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -55,6 +56,7 @@ app.include_router(expected_actual_router, prefix=settings.API_V1_STR)
 app.include_router(compliance_rules_router, prefix=settings.API_V1_STR)
 app.include_router(compliance_router, prefix=settings.API_V1_STR)
 app.include_router(llm_router, prefix=settings.API_V1_STR)
+app.include_router(questions_router, prefix=settings.API_V1_STR)
 
 
 @app.get("/")
